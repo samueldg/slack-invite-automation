@@ -9,7 +9,22 @@ router.get('/', function(req, res) {
                         tokenRequired: !!config.inviteToken });
 });
 
+router.get('/embedded', function(req, res) {
+  res.setLocale(config.locale);
+  res.render('embedded', { community: config.community,
+                           tokenRequired: !!config.inviteToken });
+});
+
+router.post('/invite_embedded', function(req, res) {
+    invite(req, res, true);
+});
+
 router.post('/invite', function(req, res) {
+    invite(req, res, false);
+});
+
+function invite(req, res, isEmbedded) {
+  var className = (isEmbedded ? 'embedded' : '');
   if (req.body.email && (!config.inviteToken || (!!config.inviteToken && req.body.token === config.inviteToken))) {
     request.post({
         url: 'https://'+ config.slackUrl + '/api/users.admin.invite',
@@ -27,6 +42,7 @@ router.post('/invite', function(req, res) {
         body = JSON.parse(body);
         if (body.ok) {
           res.render('result', {
+            className: className,
             community: config.community,
             message: 'Success! Check &ldquo;'+ req.body.email +'&rdquo; for an invite from Slack.'
           });
@@ -34,6 +50,7 @@ router.post('/invite', function(req, res) {
           var error = body.error;
           if (error === 'already_invited' || error === 'already_in_team') {
             res.render('result', {
+              className: className,
               community: config.community,
               message: 'Success! You were already invited.<br>' +
                        'Visit <a href="https://'+ config.slackUrl +'">'+ config.community +'</a>'
@@ -46,6 +63,7 @@ router.post('/invite', function(req, res) {
           }
 
           res.render('result', {
+            className: className,
             community: config.community,
             message: 'Failed! ' + error,
             isFailed: true
@@ -69,11 +87,12 @@ router.post('/invite', function(req, res) {
     }
 
     res.render('result', {
+      className: className,
       community: config.community,
       message: 'Failed! ' + errMsg.join(' and ') + '.',
       isFailed: true
     });
   }
-});
+}
 
 module.exports = router;

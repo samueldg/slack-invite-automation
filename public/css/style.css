@@ -7,10 +7,32 @@ html,body{
 margin:0;
 padding:0;
 font-family: 'Open Sans', sans-serif;
-background: #fff url(../images/bg.jpg) center top no-repeat;
-background-size: cover;
 height: 100%;
 width: 100%;
+}
+body {
+background: #fff url(../images/bg.jpg) center top no-repeat;
+background-size: cover;
+}
+body.embedded {
+background-image: none !important;
+background: transparent !important;
+}
+.embedded .header {
+margin-top: 0;
+margin-bottom: 0;
+}
+.embedded .header a {
+color: orange;
+}
+.embedded .information {
+padding-top: 0;
+}
+.embedded h1 {
+display: none;
+}
+.embedded h2 {
+color: #000000;
 }
 
 
